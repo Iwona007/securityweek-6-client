@@ -22,7 +22,7 @@ public class BookClientApp {
     }
 
     public void postObject() {
-
+        String jwt = generateJwt(true);
 
         MultiValueMap<String, String> headers = new HttpHeaders();
         headers.add("Authorization", "Bearer "); // dokonczyc
@@ -30,33 +30,32 @@ public class BookClientApp {
         HttpEntity httpEntity = new HttpEntity(body, headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.exchange("", HttpMethod.POST,
+        restTemplate.exchange("http://localhost:8080/book", HttpMethod.POST,
                 httpEntity,
                 Void.class);
     }
 
     public void getObject() {
+        String jwt = generateJwt(true);
+
         MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer "); // dokonczyc
+        headers.add("Authorization", "Bearer " + jwt); // dokonczyc
 
         HttpEntity httpEntity = new HttpEntity(headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String[]> exchange = restTemplate.exchange("", HttpMethod.GET,
+        ResponseEntity<String[]> exchange = restTemplate.exchange("http://localhost:8080/book", HttpMethod.GET,
                 httpEntity,
                 String[].class);
         Stream.of(Objects.requireNonNull(exchange.getBody())).forEach(System.out::println);
-
     }
 
 
     private String generateJwt(boolean isAdmin) {
-        String jwt = generateJwt(false);
-        Algorithm algorithm = Algorithm.RSA512();
+        Algorithm algorithm = Algorithm.HMAC512("x!A%D*G-KaPdSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t7w!z$C&F)J@NcRfUjXn2r");
         return JWT.create()
                 .withClaim("admin", isAdmin)
                 .sign(algorithm);
-
     }
 
 }
