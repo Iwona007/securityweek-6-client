@@ -15,19 +15,18 @@ import org.springframework.web.client.RestTemplate;
 @Controller
 public class BookClientApp {
 
-
     public BookClientApp() {
-        postObject();
+//        postObject();
         getObject();
     }
 
     public void postObject() {
-        String jwt = generateJwt(true);
+        String jwt = generateJwt(false);
 
         MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer "); // dokonczyc
-        String body = "Nowa ksiązka";
-        HttpEntity httpEntity = new HttpEntity(body, headers);
+        headers.add("Authorization", "Bearer " + jwt);
+        String bookToAdd = "Nowa ksiązka";
+        HttpEntity httpEntity = new HttpEntity(bookToAdd, headers);
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.exchange("http://localhost:8080/book", HttpMethod.POST,
@@ -36,15 +35,14 @@ public class BookClientApp {
     }
 
     public void getObject() {
-        String jwt = generateJwt(true);
-
+        String jwt = generateJwt(false);
         MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + jwt); // dokonczyc
-
+        headers.add("Authorization", "Bearer " + jwt);
         HttpEntity httpEntity = new HttpEntity(headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String[]> exchange = restTemplate.exchange("http://localhost:8080/book", HttpMethod.GET,
+        ResponseEntity<String[]> exchange = restTemplate.exchange("http://localhost:8080/book",
+                HttpMethod.GET,
                 httpEntity,
                 String[].class);
         Stream.of(Objects.requireNonNull(exchange.getBody())).forEach(System.out::println);
