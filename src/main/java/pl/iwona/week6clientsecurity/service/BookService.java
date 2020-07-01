@@ -12,11 +12,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class BookService {
 
-    public BookService() {
-        postObject();
-        getObject();
-    }
-
     public void postObject() {
         Token token = new Token();
         String jwt = token.generateJwt(true);

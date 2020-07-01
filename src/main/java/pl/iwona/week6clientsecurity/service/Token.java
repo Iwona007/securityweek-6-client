@@ -10,20 +10,6 @@ import pl.iwona.week6clientsecurity.RsaKey.RSAUtil;
 @Service
 public class Token {
 
-//    private RSAPrivateKey privateKey;
-//    private RSAPublicKey publicKey;
-//
-//    @EventListener(ApplicationReadyEvent.class)
-//    protected void key() {
-//        RSAUtil r = new RSAUtil();
-//        this.privateKey = r.readFileKeyLoad("key/privatekey");
-//        try {
-//            this.publicKey = (RSAPublicKey) r.getPublicKey();
-//        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     protected String generateJwt(boolean isAdmin) {
         RSAUtil r = new RSAUtil();
         PrivateKey rsaPrivateKey = r.readFileKeyLoad("key/privatekey");
@@ -32,6 +18,5 @@ public class Token {
                 .withClaim("admin", isAdmin)
                 .withClaim("name", "Iwona")
                 .sign(algorithm);
-
     }
 }
