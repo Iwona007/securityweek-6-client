@@ -22,7 +22,7 @@ public class BookService {
         HttpEntity httpEntity = new HttpEntity(bookToAdd, headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.exchange("http://localhost:8080/book",
+        restTemplate.exchange("http://localhost:8081/book",
                 HttpMethod.POST,
                 httpEntity,
                 Void.class);
@@ -36,7 +36,7 @@ public class BookService {
         HttpEntity httpEntity = new HttpEntity(headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String[]> exchange = restTemplate.exchange("http://localhost:8080/book",
+        ResponseEntity<String[]> exchange = restTemplate.exchange("http://localhost:8081/book",
                 HttpMethod.GET,
                 httpEntity,
                 String[].class);
