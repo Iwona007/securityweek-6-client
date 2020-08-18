@@ -10,7 +10,6 @@ public class BookClientApp {
 
     public BookClientApp(BookService bookService) {
         this.bookService = bookService;
-
         bookService.postObject();
         bookService.getObject();
     }
