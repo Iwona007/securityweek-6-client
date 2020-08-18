@@ -1,44 +1,46 @@
 package pl.iwona.week6clientsecurity.RsaKey;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMKeyPair;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RSAUtil {
 
-    static {
-        Security.addProvider(new BouncyCastleProvider());
-    }
+    public static Map<String, Object> getKeys() {
 
-    protected static RSAPrivateKey readPrivateKey(File keyFile) {
+        KeyPairGenerator keyPairGenerator = null;
         try {
-            PEMParser pemParser = new PEMParser(new FileReader(keyFile));
-            JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
-            Object object = pemParser.readObject();
-            KeyPair kp = converter.getKeyPair((PEMKeyPair) object);
-            return (RSAPrivateKey) kp.getPrivate();
-        } catch (IOException e) {
+            keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(1024);
+
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            RSAPublicKeySpec publicKeySpec = keyFactory.getKeySpec(keyPair.getPublic(), RSAPublicKeySpec.class);
+            RSAPrivateKeySpec privateKeySpec = keyFactory.getKeySpec(keyPair.getPrivate(), RSAPrivateKeySpec.class);
+
+            RSAPublicKey publicKey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
+            RSAPrivateKey privateKey = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
+
+            System.out.println(privateKey);
+
+            Map<String, Object> keys = new HashMap<>();
+            keys.put("private", privateKey);
+            keys.put("public", publicKey);
+            return keys;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
-            return null;
         }
-    }
+        return null;
 
-    public RSAPrivateKey readFileKeyLoad(String filename) {
-        return RSAUtil.readPrivateKey(readFile(filename));
-    }
-
-    private File readFile(String fileName) {
-        ClassLoader classLoader = getClass().getClassLoader();
-        return new File(classLoader.getResource(fileName).getFile());
     }
 }
 
